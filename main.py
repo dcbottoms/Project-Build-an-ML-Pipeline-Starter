@@ -53,13 +53,36 @@ def go(config: DictConfig):
             ##################
             # Implement here #
             ##################
-            pass
+            _ = mlflow.run(
+                "src/basic_cleaning",
+                "main",
+                env_manager="conda",
+                parameters={
+                    "input_artifact": "sample.csv:latest",
+                    "output_artifact": "clean_sample",
+                    "output_type": "clean_sample",
+                    "output_description": "Data with outliers and null values removed",
+                    "min_price": config["etl"]["min_price"],
+                    "max_price": config["etl"]["max_price"],
+                },
+            )
 
         if "data_check" in active_steps:
             ##################
             # Implement here #
             ##################
-            pass
+            _ = mlflow.run(
+                "src/data_check",
+                "main",
+                env_manager="conda",
+                parameters={
+                    "csv": "clean_sample:latest",
+                    "ref": "clean_sample:reference",
+                    "kl_threshold": config["data_check"]["kl_threshold"],
+                    "min_price": config["etl"]["min_price"],
+                    "max_price": config["etl"]["max_price"],
+                },
+            )
 
         if "data_split" in active_steps:
             ##################
